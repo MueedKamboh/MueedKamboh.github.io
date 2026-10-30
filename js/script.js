@@ -1,75 +1,89 @@
-// Footer year
 document.getElementById('year').textContent = new Date().getFullYear();
 
-// Mobile nav toggle
+const header = document.getElementById('header');
 const navToggle = document.getElementById('navToggle');
 const navLinks = document.getElementById('navLinks');
 
 navToggle.addEventListener('click', () => {
-  navLinks.classList.toggle('open');
+  const open = navLinks.classList.toggle('open');
+  navToggle.setAttribute('aria-expanded', String(open));
 });
 
-navLinks.querySelectorAll('a').forEach((link) => {
-  link.addEventListener('click', () => navLinks.classList.remove('open'));
-});
-
-// Scroll reveal
-const revealEls = document.querySelectorAll('.reveal');
-const observer = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('in-view');
-        observer.unobserve(entry.target);
-      }
-    });
-  },
-  { threshold: 0.15 }
+navLinks.querySelectorAll('a').forEach((a) =>
+  a.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    navToggle.setAttribute('aria-expanded', 'false');
+  })
 );
-revealEls.forEach((el) => observer.observe(el));
 
-// Lightweight particle background
-const canvas = document.getElementById('particles');
-const ctx = canvas.getContext('2d');
-let particles = [];
-let width, height;
+window.addEventListener('scroll', () => {
+  header.classList.toggle('scrolled', window.scrollY > 20);
+}, { passive: true });
 
-function resize() {
-  width = canvas.width = window.innerWidth;
-  height = canvas.height = window.innerHeight;
-}
-
-function createParticles() {
-  const count = Math.min(70, Math.floor((width * height) / 18000));
-  particles = Array.from({ length: count }, () => ({
-    x: Math.random() * width,
-    y: Math.random() * height,
-    r: Math.random() * 1.6 + 0.4,
-    dx: (Math.random() - 0.5) * 0.25,
-    dy: (Math.random() - 0.5) * 0.25,
-  }));
-}
-
-function animate() {
-  ctx.clearRect(0, 0, width, height);
-  ctx.fillStyle = 'rgba(59, 130, 246, 0.55)';
-  particles.forEach((p) => {
-    p.x += p.dx;
-    p.y += p.dy;
-    if (p.x < 0 || p.x > width) p.dx *= -1;
-    if (p.y < 0 || p.y > height) p.dy *= -1;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fill();
+// Reveal on scroll
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in');
+      revealObserver.unobserve(entry.target);
+    }
   });
-  requestAnimationFrame(animate);
-}
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
 
-window.addEventListener('resize', () => {
-  resize();
-  createParticles();
+document.querySelectorAll('.reveal').forEach((el, i) => {
+  el.style.transitionDelay = `${(i % 4) * 70}ms`;
+  revealObserver.observe(el);
 });
 
-resize();
-createParticles();
-animate();
+// Active nav link
+const navAnchors = [...navLinks.querySelectorAll('a')];
+const sectionObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      navAnchors.forEach((a) =>
+        a.classList.toggle('active', a.getAttribute('href') === `#${entry.target.id}`)
+      );
+    }
+  });
+}, { rootMargin: '-45% 0px -50% 0px' });
+
+document.querySelectorAll('main section[id]').forEach((s) => sectionObserver.observe(s));
+
+// Count-up stats
+const countObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (!entry.isIntersecting) return;
+    const el = entry.target;
+    const target = Number(el.dataset.count);
+    const start = performance.now();
+    const step = (now) => {
+      const t = Math.min((now - start) / 1200, 1);
+      el.textContent = Math.round(target * (1 - Math.pow(1 - t, 3)));
+      if (t < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+    countObserver.unobserve(el);
+  });
+}, { threshold: 0.6 });
+
+document.querySelectorAll('[data-count]').forEach((el) => countObserver.observe(el));
+
+// Experience tabs
+const tabs = document.querySelectorAll('.xp-tab');
+tabs.forEach((tab) =>
+  tab.addEventListener('click', () => {
+    tabs.forEach((t) => t.classList.toggle('active', t === tab));
+    document.querySelectorAll('.xp-panel').forEach((p) =>
+      p.classList.toggle('active', p.id === tab.dataset.tab)
+    );
+  })
+);
+
+// Spotlight on expertise tiles
+document.querySelectorAll('.tile').forEach((tile) =>
+  tile.addEventListener('pointermove', (e) => {
+    const r = tile.getBoundingClientRect();
+    tile.style.setProperty('--mx', `${e.clientX - r.left}px`);
+    tile.style.setProperty('--my', `${e.clientY - r.top}px`);
+  })
+);
