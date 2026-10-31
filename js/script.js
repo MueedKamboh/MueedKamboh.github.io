@@ -72,12 +72,39 @@ document.querySelectorAll('[data-count]').forEach((el) => countObserver.observe(
 const tabs = document.querySelectorAll('.xp-tab');
 tabs.forEach((tab) =>
   tab.addEventListener('click', () => {
-    tabs.forEach((t) => t.classList.toggle('active', t === tab));
-    document.querySelectorAll('.xp-panel').forEach((p) =>
-      p.classList.toggle('active', p.id === tab.dataset.tab)
-    );
+    tabs.forEach((t) => {
+      const on = t === tab;
+      t.classList.toggle('active', on);
+      t.setAttribute('aria-selected', String(on));
+    });
+    document.querySelectorAll('.xp-panel').forEach((p) => {
+      p.hidden = p.id !== tab.dataset.tab;
+    });
   })
 );
+
+// Decorative hero telemetry
+const socEl = document.getElementById('soc');
+const socBar = document.getElementById('socBar');
+const psetEl = document.getElementById('pset');
+const spark = document.getElementById('sparkLine');
+const series = Array.from({ length: 20 }, (_, i) => 4.8 + Math.sin(i / 2) * 0.4);
+let soc = 72;
+
+function tick() {
+  soc = Math.min(88, Math.max(45, soc + (Math.random() - 0.5) * 3));
+  socEl.textContent = Math.round(soc);
+  socBar.style.width = `${soc}%`;
+
+  const next = Math.min(5.6, Math.max(4.0, series[series.length - 1] + (Math.random() - 0.5) * 0.5));
+  series.push(next);
+  series.shift();
+  psetEl.textContent = next.toFixed(1);
+  spark.setAttribute('points', series.map((v, i) => `${(i / 19) * 100},${22 - ((v - 4) / 1.6) * 20}`).join(' '));
+}
+
+tick();
+if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(tick, 1800);
 
 // Spotlight on expertise tiles
 document.querySelectorAll('.tile').forEach((tile) =>
