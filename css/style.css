@@ -930,6 +930,11 @@ a { color: inherit; }
 
 .cta-actions { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
 
+.cta-mail { margin-top: 18px; color: rgba(255, 255, 255, 0.75); font-size: 0.95rem; }
+.cta-mail strong { color: #fff; font-family: var(--mono); font-weight: 600; letter-spacing: 0.01em; }
+
+#copyEmail.copied { background: rgba(52, 211, 153, 0.25); border-color: rgba(52, 211, 153, 0.6); }
+
 /* ---------- footer ---------- */
 .footer {
   display: flex;
