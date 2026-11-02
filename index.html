@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/style.css?v=3" />
 </head>
 <body>
 
@@ -24,6 +24,7 @@
   <nav class="nav" aria-label="Main">
     <a href="#home" class="brand"><span class="brand-mark">M</span><span class="brand-name">Mueed-Ul-Haq</span></a>
     <ul class="nav-links" id="navLinks">
+      <li><a href="#live">Live demo</a></li>
       <li><a href="#expertise">Expertise</a></li>
       <li><a href="#experience">Experience</a></li>
       <li><a href="#projects">Projects</a></li>
@@ -81,6 +82,10 @@
         <span class="hud-val"><b id="pset">4.8</b> MW</span>
         <svg class="spark" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline id="sparkLine" fill="none" stroke="url(#sg)" stroke-width="2" points=""/><defs><linearGradient id="sg" x1="0" x2="1"><stop offset="0" stop-color="#4f46e5"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs></svg>
       </div>
+      <div class="hud hud-4" aria-hidden="true">
+        <span class="hud-label">Grid frequency</span>
+        <span class="hud-val"><b id="freq">50.00</b> Hz</span>
+      </div>
     </div>
   </section>
 
@@ -90,6 +95,73 @@
     <div class="stat"><p class="stat-figure"><span data-count="5">5</span></p><p>Companies</p></div>
     <div class="stat"><p class="stat-figure">Patents</p><p>Filed at E.ON</p></div>
     <div class="stat"><p class="stat-figure">IEEE</p><p>First-author paper</p></div>
+  </section>
+
+  <!-- LIVE CONTROL ROOM (simulated) -->
+  <section id="live" class="section wrap">
+    <div class="section-head reveal">
+      <span class="kicker">Live demo</span>
+      <h2>A glimpse of the control room.</h2>
+    </div>
+
+    <div class="cr reveal" aria-label="Simulated VPP control room dashboard">
+      <div class="cr-top">
+        <div class="cr-title"><span class="live-dot"></span>VPP Control Room <em>simulated data</em></div>
+        <div class="cr-clock" id="crClock">--:--:--</div>
+      </div>
+
+      <div class="cr-kpis">
+        <div class="kpi"><span>Portfolio output</span><b><i id="kOut">0.0</i> MW</b><small id="kOutDelta" class="up">▲ 0.0</small></div>
+        <div class="kpi"><span>Grid frequency</span><b><i id="kFreq">50.000</i> Hz</b><small id="kFreqDev">Δ 0 mHz</small></div>
+        <div class="kpi"><span>Stored energy</span><b><i id="kEnergy">0.0</i> MWh</b><small>of 96.0 MWh</small></div>
+        <div class="kpi"><span>Assets online</span><b><i id="kOnline">8</i> / 8</b><small id="kAvail">Availability 100%</small></div>
+        <div class="kpi"><span>Telemetry rate</span><b><i id="kMsgs">0</i> msg/s</b><small id="kLat">Latency 0 ms</small></div>
+        <div class="kpi"><span>FCR reserve</span><b><i id="kFcr">0.0</i> MW</b><small>Committed</small></div>
+      </div>
+
+      <div class="cr-main">
+        <div class="cr-card cr-chart">
+          <div class="cr-card-head"><span>Setpoint vs. actual · last 60 s</span><span class="legend"><i class="l1"></i>Setpoint <i class="l2"></i>Actual</span></div>
+          <svg viewBox="0 0 600 200" preserveAspectRatio="none" class="chart">
+            <defs>
+              <linearGradient id="areaGrad" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#22d3ee" stop-opacity="0.35"/><stop offset="1" stop-color="#22d3ee" stop-opacity="0"/></linearGradient>
+            </defs>
+            <g class="gridlines"><line x1="0" y1="50" x2="600" y2="50"/><line x1="0" y1="100" x2="600" y2="100"/><line x1="0" y1="150" x2="600" y2="150"/></g>
+            <path id="chartArea" fill="url(#areaGrad)" d=""/>
+            <polyline id="chartSet" fill="none" stroke="#a78bfa" stroke-width="2" stroke-dasharray="6 5" points=""/>
+            <polyline id="chartAct" fill="none" stroke="#22d3ee" stroke-width="2.5" points=""/>
+          </svg>
+        </div>
+
+        <div class="cr-card cr-freq">
+          <div class="cr-card-head"><span>Frequency</span></div>
+          <svg viewBox="0 0 200 120" class="gauge">
+            <path d="M20 110 A80 80 0 0 1 180 110" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="12" stroke-linecap="round"/>
+            <path d="M20 110 A80 80 0 0 1 180 110" fill="none" stroke="url(#gaugeGrad)" stroke-width="12" stroke-linecap="round" stroke-dasharray="2 6"/>
+            <defs><linearGradient id="gaugeGrad"><stop offset="0" stop-color="#f472b6"/><stop offset="0.5" stop-color="#34d399"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs>
+            <line id="needle" x1="100" y1="110" x2="100" y2="40" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="100" cy="110" r="6" fill="#fff"/>
+          </svg>
+          <div class="gauge-scale"><span>49.90</span><span>50.00</span><span>50.10</span></div>
+          <div class="links">
+            <div><span><i class="dot ok"></i>IEC 104</span><b id="lIec">12 ms</b></div>
+            <div><span><i class="dot ok"></i>Modbus TCP</span><b id="lMb">8 ms</b></div>
+            <div><span><i class="dot ok"></i>MQTT</span><b id="lMq">21 ms</b></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cr-bottom">
+        <div class="cr-card">
+          <div class="cr-card-head"><span>Assets</span><span id="assetCount"></span></div>
+          <div class="assets" id="assets"></div>
+        </div>
+        <div class="cr-card cr-log">
+          <div class="cr-card-head"><span>Event log</span></div>
+          <ul id="log"></ul>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- EXPERTISE -->
@@ -310,6 +382,6 @@
   <a href="#home">Back to top ↑</a>
 </footer>
 
-<script src="js/script.js"></script>
+<script src="js/script.js?v=3"></script>
 </body>
 </html>
